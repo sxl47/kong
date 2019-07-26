@@ -132,8 +132,12 @@ local function create_hash(request_uri, hmac_params)
     if not header_value then
       if header == "request-line" then
         -- request-line in hmac headers list
+        local http_version = kong.request.get_http_version()
+        if http_version then
+          http_version = fmt("%.01f", http_version)
+        end
         local request_line = fmt("%s %s HTTP/%s", kong.request.get_method(),
-                                 request_uri, kong.request.get_http_version())
+                                 request_uri, http_version)
         signing_string = signing_string .. request_line
 
       else
